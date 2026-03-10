@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis } from "recharts";
 
 function App() {
 
@@ -14,6 +14,16 @@ function App() {
   const possessionData = [
     { name: teamA || "Equipo A", value: Number(posA) || 0 },
     { name: teamB || "Equipo B", value: Number(posB) || 0 }
+  ];
+  const shotsData = [
+    {
+      team: teamA || "Equipo A",
+      shots: Number(shotsA) || 0
+    },
+    {
+      team: teamB || "Equipo B",
+      shots: Number(shotsB) || 0
+    }
   ];
 
   async function analyze() {
@@ -120,6 +130,19 @@ function App() {
             <Tooltip />
 
           </PieChart>
+        </>
+      )}
+
+      {analysis && (
+        <>
+          <h2 style={{ marginTop: 30 }}>📊 Remates</h2>
+
+          <BarChart width={400} height={300} data={shotsData}>
+            <XAxis dataKey="team" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="shots" fill="#22c55e" />
+          </BarChart>
         </>
       )}
 
