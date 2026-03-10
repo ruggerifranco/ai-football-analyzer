@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis } from "recharts";
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, PieChart, Cell, Pie, Tooltip, Bar, BarChart, XAxis, YAxis } from "recharts";
 
 function App() {
 
@@ -31,6 +31,18 @@ function App() {
       shots: Number(shotsB) || 0
     }
   ];
+  const data = [
+    { name: teamA, value: Number(shotsA) },
+    { name: teamB, value: Number(shotsB) }
+  ];
+  const radarData = analysis?.metrics
+    ? [
+      { subject: "Ataque", value: analysis.metrics.attack },
+      { subject: "Defensa", value: analysis.metrics.defense },
+      { subject: "Control", value: analysis.metrics.control },
+      { subject: "Disciplina", value: analysis.metrics.discipline }
+    ]
+    : [];
 
   async function analyze() {
 
@@ -76,7 +88,7 @@ function App() {
   }
 
   return (
-    <div style={{ padding: 40, maxWidth: 1200, margin: "0 auto" }}>
+    <div style={{ padding: 40, margin: "0 auto" }}>
 
       <h1 style={{ textAlign: "center", marginBottom: 40 }}>
         ⚽ IA Analizadora de Partidos de Fútbol
@@ -180,6 +192,19 @@ function App() {
             <Tooltip />
             <Bar dataKey="shots" fill="#22c55e" />
           </BarChart>
+        </>
+      )}
+
+      {analysis?.metrics && (
+        <>
+          <h2>Análisis táctico</h2>
+
+          <RadarChart width={400} height={300} data={radarData}>
+            <PolarGrid />
+            <PolarAngleAxis dataKey="subject" />
+            <PolarRadiusAxis angle={30} domain={[0, 10]} />
+            <Radar name="Equipo" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+          </RadarChart>
         </>
       )}
 

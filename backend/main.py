@@ -81,7 +81,13 @@ Formato:
  "discipline": "",
  "formation_analysis": "",
  "key_insight": "",
- "summary": ""
+ "summary": "",
+ "metrics": {{
+   "attack": 0,
+   "defense": 0,
+   "control": 0,
+   "discipline": 0
+ }}
 }}
 """
 
@@ -101,7 +107,13 @@ Formato:
          "discipline": "unknown",
          "formation_analysis": "unknown",
          "key_insight": analysis_text,
-         "summary": analysis_text
+         "summary": analysis_text,
+         "metrics": {
+   "attack": 0,
+   "defense": 0,
+   "control": 0,
+   "discipline": 0
+ }
     }
 
     return {
