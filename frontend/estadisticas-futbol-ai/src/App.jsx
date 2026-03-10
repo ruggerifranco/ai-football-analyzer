@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
 
 function App() {
 
@@ -8,51 +9,69 @@ function App() {
   const [shotsB, setShotsB] = useState("");
   const [posA, setPosA] = useState("");
   const [posB, setPosB] = useState("");
-
-  const [analysis, setAnalysis] = useState("");
+  const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
+  const possessionData = [
+    { name: teamA || "Equipo A", value: Number(posA) || 0 },
+    { name: teamB || "Equipo B", value: Number(posB) || 0 }
+  ];
 
   async function analyze() {
 
-    setLoading(true);
-    setAnalysis("");
+    try {
 
-    const res = await fetch("http://127.0.0.1:8000/analyze", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        teamA,
-        teamB,
-        shotsA: Number(shotsA),
-        shotsB: Number(shotsB),
-        possessionA: Number(posA),
-        possessionB: Number(posB)
-      })
-    });
+      setLoading(true);
+      setAnalysis("");
 
-    const data = await res.json();
+      const res = await fetch("http://127.0.0.1:8000/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          teamA,
+          teamB,
+          shotsA: Number(shotsA),
+          shotsB: Number(shotsB),
+          possessionA: Number(posA),
+          possessionB: Number(posB)
+        })
+      });
 
-    setAnalysis(data.analysis);
-    setLoading(false);
+      const data = await res.json();
+
+      setAnalysis(data.analysis);
+
+    } catch (error) {
+
+      setAnalysis("Error analizando partido");
+
+    } finally {
+
+      setLoading(false);
+
+    }
   }
 
   return (
-    <div style={{padding:40, maxWidth:600}}>
+    <div style={{ padding: 40, maxWidth: 600 }}>
 
-      <h1>⚽ AI Football Match Analyzer</h1>
+      <h1>⚽ IA analizadora de partidos de fútbol </h1>
 
-      <input placeholder="Equipo A" onChange={(e)=>setTeamA(e.target.value)} />
-      <input placeholder="Equipo B" onChange={(e)=>setTeamB(e.target.value)} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 
-      <input placeholder="Remates Equipo A" onChange={(e)=>setShotsA(e.target.value)} />
-      <input placeholder="Remates Equipo B" onChange={(e)=>setShotsB(e.target.value)} />
+        <input placeholder="Equipo A" onChange={(e) => setTeamA(e.target.value)} />
+        <input placeholder="Equipo B" onChange={(e) => setTeamB(e.target.value)} />
 
-      <input placeholder="Posesión Equipo A %" onChange={(e)=>setPosA(e.target.value)} />
-      <input placeholder="Posesión Equipo B %" onChange={(e)=>setPosB(e.target.value)} />
+        <input placeholder="Remates Equipo A" onChange={(e) => setShotsA(e.target.value)} />
+        <input placeholder="Remates Equipo B" onChange={(e) => setShotsB(e.target.value)} />
 
-      <br/><br/>
+        <input placeholder="Posesión Equipo A %" onChange={(e) => setPosA(e.target.value)} />
+        <input placeholder="Posesión Equipo B %" onChange={(e) => setPosB(e.target.value)} />
+
+      </div>
+
+      <br />
 
       <button onClick={analyze}>
         Analizar Partido
@@ -60,7 +79,49 @@ function App() {
 
       {loading && <p>⏳ Analizando partido...</p>}
 
-      <pre>{analysis}</pre>
+      {analysis && (
+        <div style={{ marginTop: 30 }}>
+
+          <h2>📊 Análisis del Partido</h2>
+
+          <p>
+            <strong>⚽ Equipo dominante:</strong> {analysis.dominant_team}
+          </p>
+
+          <p>
+            <strong>🧠 Estilo táctico:</strong> {analysis.tactical_style}
+          </p>
+
+          <p>
+            <strong>📋 Resumen:</strong>
+          </p>
+
+          <p>{analysis.summary}</p>
+
+        </div>
+      )}
+
+      {analysis && (
+        <>
+          <h2 style={{ marginTop: 30 }}>📊 Posesión</h2>
+
+          <PieChart width={400} height={300}>
+            <Pie
+              data={possessionData}
+              dataKey="value"
+              nameKey="name"
+              outerRadius={100}
+              label
+            >
+              <Cell fill="#3b82f6" />
+              <Cell fill="#ef4444" />
+            </Pie>
+
+            <Tooltip />
+
+          </PieChart>
+        </>
+      )}
 
     </div>
   );

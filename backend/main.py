@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-import google.generativeai as genai
 from fastapi.middleware.cors import CORSMiddleware
+import json
+import google.generativeai as genai
 
 genai.configure(api_key="AIzaSyAFAStM3GPnv-wP-bMRXM5t40t0aGFkvpY")
 
@@ -32,7 +33,7 @@ async def analyze_match(stats: MatchStats):
     prompt = f"""
 Eres un analista táctico de fútbol.
 
-Analiza este partido:
+Analiza el partido usando estas estadísticas:
 
 Equipo A: {stats.teamA}
 Equipo B: {stats.teamB}
@@ -45,7 +46,9 @@ Posesión:
 {stats.teamA}: {stats.possessionA}%
 {stats.teamB}: {stats.possessionB}%
 
-Devuelve SOLO un JSON con este formato:
+Responde SOLO en JSON válido.
+
+Formato:
 
 {{
  "dominant_team": "",
@@ -55,7 +58,21 @@ Devuelve SOLO un JSON con este formato:
 """
 
     response = model.generate_content(prompt)
+    
+    analysis_text = response.text
+
+    analysis_text = analysis_text.replace("```json", "").replace("```", "").strip()
+
+    try:
+       analysis_json = json.loads(analysis_text)
+    except:
+       analysis_json = {
+        "dominant_team": "unknown",
+        "tactical_style": "unknown",
+        "summary": analysis_text
+    }
 
     return {
-    "analysis": response.text
+    "analysis": analysis_json,
+    "stats": stats
 }
