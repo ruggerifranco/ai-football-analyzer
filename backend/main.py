@@ -53,6 +53,8 @@ Formato:
 {{
  "dominant_team": "",
  "tactical_style": "",
+ "intensity": "",
+ "key_insight": "",
  "summary": ""
 }}
 """

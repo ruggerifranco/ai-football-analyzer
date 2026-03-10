@@ -92,20 +92,18 @@ function App() {
       {analysis && (
         <div style={{ marginTop: 30 }}>
 
-          <h2>📊 Análisis del Partido</h2>
+          <h2>📊 Análisis táctico</h2>
 
-          <p>
-            <strong>⚽ Equipo dominante:</strong> {analysis.dominant_team}
-          </p>
+          <p><strong>⚽ Equipo dominante:</strong> {analysis.dominant_team}</p>
 
-          <p>
-            <strong>🧠 Estilo táctico:</strong> {analysis.tactical_style}
-          </p>
+          <p><strong>🧠 Estilo táctico:</strong> {analysis.tactical_style}</p>
 
-          <p>
-            <strong>📋 Resumen:</strong>
-          </p>
+          <p><strong>🔥 Intensidad:</strong> {analysis.intensity}</p>
 
+          <p><strong>💡 Insight clave:</strong></p>
+          <p>{analysis.key_insight}</p>
+
+          <h3>Resumen</h3>
           <p>{analysis.summary}</p>
 
         </div>
