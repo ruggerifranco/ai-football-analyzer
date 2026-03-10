@@ -11,6 +11,12 @@ function App() {
   const [posB, setPosB] = useState("");
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [formationA, setFormationA] = useState("")
+  const [formationB, setFormationB] = useState("")
+  const [yellowA, setYellowA] = useState("")
+  const [yellowB, setYellowB] = useState("")
+  const [redA, setRedA] = useState("")
+  const [redB, setRedB] = useState("")
   const possessionData = [
     { name: teamA || "Equipo A", value: Number(posA) || 0 },
     { name: teamB || "Equipo B", value: Number(posB) || 0 }
@@ -44,7 +50,13 @@ function App() {
           shotsA: Number(shotsA),
           shotsB: Number(shotsB),
           possessionA: Number(posA),
-          possessionB: Number(posB)
+          possessionB: Number(posB),
+          formationA,
+          formationB,
+          yellowA: Number(yellowA),
+          yellowB: Number(yellowB),
+          redA: Number(redA),
+          redB: Number(redB)
         })
       });
 
@@ -64,12 +76,19 @@ function App() {
   }
 
   return (
-    <div style={{ padding: 40, maxWidth: 600 }}>
+    <div style={{ padding: 40, maxWidth: 1200, margin: "0 auto" }}>
 
-      <h1>⚽ IA analizadora de partidos de fútbol </h1>
+      <h1 style={{ textAlign: "center", marginBottom: 40 }}>
+        ⚽ IA Analizadora de Partidos de Fútbol
+      </h1>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        maxWidth: 400,
+        margin: "0 auto"
+      }}>
         <input placeholder="Equipo A" onChange={(e) => setTeamA(e.target.value)} />
         <input placeholder="Equipo B" onChange={(e) => setTeamB(e.target.value)} />
 
@@ -79,32 +98,52 @@ function App() {
         <input placeholder="Posesión Equipo A %" onChange={(e) => setPosA(e.target.value)} />
         <input placeholder="Posesión Equipo B %" onChange={(e) => setPosB(e.target.value)} />
 
+        <input placeholder="Formación Equipo A (ej 4-4-2)" onChange={(e) => setFormationA(e.target.value)} />
+        <input placeholder="Formación Equipo B (ej 5-3-2)" onChange={(e) => setFormationB(e.target.value)} />
+
+        <input placeholder="Amarillas Equipo A" onChange={(e) => setYellowA(e.target.value)} />
+        <input placeholder="Amarillas Equipo B" onChange={(e) => setYellowB(e.target.value)} />
+
+        <input placeholder="Rojas Equipo A" onChange={(e) => setRedA(e.target.value)} />
+        <input placeholder="Rojas Equipo B" onChange={(e) => setRedB(e.target.value)} />
+
       </div>
 
-      <br />
-
-      <button onClick={analyze}>
-        Analizar Partido
-      </button>
+      <div style={{ textAlign: "center", marginTop: 20 }}>
+        <button onClick={analyze}>
+          Analizar Partido
+        </button>
+      </div>
 
       {loading && <p>⏳ Analizando partido...</p>}
 
       {analysis && (
-        <div style={{ marginTop: 30 }}>
+        <div style={{
+          marginTop: 40,
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 40
+        }}>
+          <div>
 
-          <h2>📊 Análisis táctico</h2>
+            <h2>📊 Análisis táctico</h2>
 
-          <p><strong>⚽ Equipo dominante:</strong> {analysis.dominant_team}</p>
+            <p><strong>⚽ Equipo dominante:</strong> {analysis.dominant_team}</p>
+            <p><strong>🧠 Estilo táctico:</strong> {analysis.tactical_style}</p>
+            <p><strong>🔥 Intensidad:</strong> {analysis.intensity}</p>
 
-          <p><strong>🧠 Estilo táctico:</strong> {analysis.tactical_style}</p>
+            <p><strong>📐 Formaciones:</strong></p>
+            <p>{analysis.formation_analysis}</p>
 
-          <p><strong>🔥 Intensidad:</strong> {analysis.intensity}</p>
+            <p><strong>🟨 Disciplina:</strong></p>
+            <p>{analysis.discipline}</p>
 
-          <p><strong>💡 Insight clave:</strong></p>
-          <p>{analysis.key_insight}</p>
+            <p><strong>💡 Insight:</strong></p>
+            <p>{analysis.key_insight}</p>
 
-          <h3>Resumen</h3>
-          <p>{analysis.summary}</p>
+            <p>{analysis.summary}</p>
+
+          </div>
 
         </div>
       )}

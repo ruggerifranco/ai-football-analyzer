@@ -1,10 +1,16 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+import os
+from dotenv import load_dotenv
 import json
 import google.generativeai as genai
 
-genai.configure(api_key="AIzaSyAFAStM3GPnv-wP-bMRXM5t40t0aGFkvpY")
+load_dotenv()
+
+api_key = os.getenv("GEMINI_API_KEY")
+
+genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("models/gemini-flash-lite-latest")
 
@@ -25,6 +31,12 @@ class MatchStats(BaseModel):
     possessionB: int
     shotsA: int
     shotsB: int
+    formationA: str
+    formationB: str
+    yellowA: int
+    yellowB: int
+    redA: int
+    redB: int
 
 
 @app.post("/analyze")
@@ -46,6 +58,18 @@ Posesión:
 {stats.teamA}: {stats.possessionA}%
 {stats.teamB}: {stats.possessionB}%
 
+Formaciones:
+{stats.teamA}: {stats.formationA}
+{stats.teamB}: {stats.formationB}
+
+Tarjetas Amarillas:
+{stats.teamA}: {stats.yellowA}
+{stats.teamB}: {stats.yellowB}
+
+Tarjetas Rojas:
+{stats.teamA}: {stats.redA}
+{stats.teamB}: {stats.redB}
+
 Responde SOLO en JSON válido.
 
 Formato:
@@ -54,6 +78,8 @@ Formato:
  "dominant_team": "",
  "tactical_style": "",
  "intensity": "",
+ "discipline": "",
+ "formation_analysis": "",
  "key_insight": "",
  "summary": ""
 }}
@@ -69,9 +95,13 @@ Formato:
        analysis_json = json.loads(analysis_text)
     except:
        analysis_json = {
-        "dominant_team": "unknown",
-        "tactical_style": "unknown",
-        "summary": analysis_text
+         "dominant_team": "unknown",
+         "tactical_style": "unknown",
+         "intensity": "unknown",
+         "discipline": "unknown",
+         "formation_analysis": "unknown",
+         "key_insight": analysis_text,
+         "summary": analysis_text
     }
 
     return {
