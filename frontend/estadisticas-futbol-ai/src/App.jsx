@@ -106,6 +106,23 @@ function App() {
 
   }
 
+  function viewMatch(match) {
+
+    const parsedAnalysis = JSON.parse(match.analysis);
+
+    setTeamA(match.teamA);
+    setTeamB(match.teamB);
+
+    setShotsA(match.shotsA);
+    setShotsB(match.shotsB);
+
+    setPosA(match.possessionA);
+    setPosB(match.possessionB);
+
+    setAnalysis(parsedAnalysis);
+
+  }
+
   useEffect(() => {
 
     loadMatches();
@@ -155,7 +172,7 @@ function App() {
 
       {analysis &&
         (
-          <div style={{ textAlign: "center", marginTop: 20, maxWidth: 400 }}>
+          <div style={{ textAlign: "center", margin: '50px 500px' }}>
             <div>
               <h2>📊 Análisis táctico</h2>
               <p><strong>⚽ Equipo dominante:</strong> {analysis.dominant_team}</p>
@@ -252,11 +269,14 @@ function App() {
             return (
               <div
                 key={match.id}
+                onClick={() => viewMatch(match)}
                 style={{
                   border: "1px solid #ddd",
                   borderRadius: 10,
                   padding: 20,
-                  background: "#9b9b9b"
+                  background: "#9b9b9b",
+                  cursor: "pointer",
+                  transition: "0.2s"
                 }}
               >
 
