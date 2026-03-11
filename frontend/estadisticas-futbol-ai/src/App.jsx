@@ -127,6 +127,27 @@ function App() {
         </button>
       </div>
 
+      
+          {analysis &&
+            (
+              <div style={{ textAlign: "center", marginTop: 20, maxWidth: 400}}>
+                <div>
+                  <h2>📊 Análisis táctico</h2>
+                  <p><strong>⚽ Equipo dominante:</strong> {analysis.dominant_team}</p>
+                  <p><strong>🧠 Estilo táctico:</strong> {analysis.tactical_style}</p>
+                  <p><strong>🔥 Intensidad:</strong> {analysis.intensity}</p>
+                  <p><strong>📐 Formaciones:</strong></p>
+                  <p>{analysis.formation_analysis}</p>
+                  <p><strong>🟨 Disciplina:</strong></p>
+                  <p>{analysis.discipline}</p>
+                  <p><strong>💡 Insight:</strong></p>
+                  <p>{analysis.key_insight}</p>
+                  <p>{analysis.summary}</p>
+                </div>
+              </div>
+            )
+          }
+
       {analysis && (
         <div
           style={{
