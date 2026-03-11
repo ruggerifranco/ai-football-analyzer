@@ -75,6 +75,19 @@ Tarjetas Rojas:
 {stats.teamA}: {stats.redA}
 {stats.teamB}: {stats.redB}
 
+Evalúa:
+
+- ritmo del partido
+- intensidad de presión
+- velocidad de transición
+- fortalezas tácticas
+- debilidades tácticas
+- recomendaciones para el entrenador
+
+Las fortalezas, debilidades y recomendaciones deben ser listas
+de máximo 3 puntos cada una.
+
+
 Responde SOLO en JSON válido.
 
 Formato:
@@ -87,6 +100,10 @@ Formato:
  "formation_analysis": "",
  "key_insight": "",
  "summary": "",
+  "tactical_recommendations": {{
+   "teamA": [],
+   "teamB": []
+ }},
  "metrics": {{
    "attack": 0,
    "defense": 0,
@@ -105,20 +122,24 @@ Formato:
         analysis_json = json.loads(analysis_text)
     except:
         analysis_json = {
-            "dominant_team": "unknown",
-            "tactical_style": "unknown",
-            "intensity": "unknown",
-            "discipline": "unknown",
-            "formation_analysis": "unknown",
-            "key_insight": analysis_text,
-            "summary": analysis_text,
-            "metrics": {
-                "attack": 0,
-                "defense": 0,
-                "control": 0,
-                "discipline": 0
-            }
-        }
+ "dominant_team": "unknown",
+        "tactical_style": "unknown",
+        "intensity": "unknown",
+        "discipline": "unknown",
+        "formation_analysis": "",
+        "key_insight": "",
+        "summary": "",
+        "tactical_recommendations": {
+            "teamA": [],
+            "teamB": []
+        },
+        "metrics": {
+            "attack": 0,
+            "defense": 0,
+            "control": 0,
+            "discipline": 0
+ }
+}
 
     # Guardar en DB
     db = SessionLocal()

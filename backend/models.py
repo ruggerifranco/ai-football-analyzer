@@ -1,5 +1,7 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, Integer, String, Text, DateTime
 from database import Base
+from datetime import datetime
+
 
 class Match(Base):
 
@@ -20,3 +22,5 @@ class Match(Base):
     formationB = Column(String)
 
     analysis = Column(Text)
+    
+    created_at = Column(DateTime, default=datetime.utcnow)

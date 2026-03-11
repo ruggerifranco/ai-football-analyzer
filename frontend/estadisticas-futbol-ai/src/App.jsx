@@ -172,23 +172,69 @@ function App() {
 
       {analysis &&
         (
-          <div style={{ textAlign: "center", margin: '50px 500px' }}>
+          <div style={{
+            margin: "0 auto"
+          }}>
             <div>
               <h2>📊 Análisis táctico</h2>
               <p><strong>⚽ Equipo dominante:</strong> {analysis.dominant_team}</p>
-              <p><strong>🧠 Estilo táctico:</strong> {analysis.tactical_style}</p>
-              <p><strong>🔥 Intensidad:</strong> {analysis.intensity}</p>
               <p><strong>📐 Formaciones:</strong></p>
               <p>{analysis.formation_analysis}</p>
-              <p><strong>🟨 Disciplina:</strong></p>
               <p>{analysis.discipline}</p>
-              <p><strong>💡 Insight:</strong></p>
+              <p><strong>💡 Conclusión:</strong></p>
               <p>{analysis.key_insight}</p>
               <p>{analysis.summary}</p>
+              <div style={{ marginTop: 30 }}>
+
+                <h2>📈 Evaluación del partido</h2>
+
+                <p>
+                  <strong>🧠 Estilo táctico:</strong> {analysis.tactical_style}
+                </p>
+
+                <p>
+                  <strong>🔥 Intensidad:</strong> {analysis.intensity}
+                </p>
+
+                <p>
+                  <strong>🟨 Disciplina:</strong> {analysis.discipline}
+                </p>
+
+              </div>
             </div>
           </div>
         )
       }
+
+      {analysis?.tactical_recommendations && (
+        <div style={{ marginTop: 50 }}>
+
+          <h2>🧠 Recomendaciones tácticas IA</h2>
+
+          <div style={{ display: "flex", gap: 40, justifyContent: "center" }}>
+
+            <div>
+              <h3>{teamA}</h3>
+              <ul>
+                {analysis.tactical_recommendations?.teamA?.map((rec, i) => (
+                  <li key={i}>{rec}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3>{teamB}</h3>
+              <ul>
+                {analysis.tactical_recommendations?.teamB?.map((rec, i) => (
+                  <li key={i}>{rec}</li>
+                ))}
+              </ul>
+            </div>
+
+          </div>
+
+        </div>
+      )}
 
       {analysis && (
         <div
@@ -270,19 +316,34 @@ function App() {
               <div
                 key={match.id}
                 onClick={() => viewMatch(match)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.03)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
                 style={{
                   border: "1px solid #ddd",
-                  borderRadius: 10,
+                  borderRadius: 12,
                   padding: 20,
                   background: "#9b9b9b",
                   cursor: "pointer",
-                  transition: "0.2s"
+                  transition: "0.2s",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
                 }}
               >
 
                 <h3>
                   ⚽ {match.teamA} vs {match.teamB}
                 </h3>
+
+                <p>
+                  📅 {new Date(match.created_at).toLocaleString()}
+                </p>
+
+                <p>
+                  📐 {match.formationA} vs {match.formationB}
+                </p>
 
                 <p>
                   🎯 Remates: {match.shotsA} - {match.shotsB}
