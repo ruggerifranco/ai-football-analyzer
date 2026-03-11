@@ -123,89 +123,67 @@ function App() {
 
       <div style={{ textAlign: "center", marginTop: 20 }}>
         <button onClick={analyze}>
-          Analizar Partido
+          {loading ? '⏳ Analizando partido...' : 'Analizar Partido'}
         </button>
       </div>
 
-      {loading && <p>⏳ Analizando partido...</p>}
-
       {analysis && (
-        <div style={{
-          marginTop: 40,
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 40
-        }}>
+        <div
+          style={{
+            marginTop: 40,
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 40,
+            alignItems: "center"
+          }}
+        >
+
           <div>
-
-            <h2>📊 Análisis táctico</h2>
-
-            <p><strong>⚽ Equipo dominante:</strong> {analysis.dominant_team}</p>
-            <p><strong>🧠 Estilo táctico:</strong> {analysis.tactical_style}</p>
-            <p><strong>🔥 Intensidad:</strong> {analysis.intensity}</p>
-
-            <p><strong>📐 Formaciones:</strong></p>
-            <p>{analysis.formation_analysis}</p>
-
-            <p><strong>🟨 Disciplina:</strong></p>
-            <p>{analysis.discipline}</p>
-
-            <p><strong>💡 Insight:</strong></p>
-            <p>{analysis.key_insight}</p>
-
-            <p>{analysis.summary}</p>
-
+            <h2>📊 Posesión</h2>
+            <PieChart width={350} height={250}>
+              <Pie
+                data={possessionData}
+                dataKey="value"
+                nameKey="name"
+                outerRadius={90}
+                label
+              >
+                <Cell fill="#3b82f6" />
+                <Cell fill="#ef4444" />
+              </Pie>
+              <Tooltip />
+            </PieChart>
           </div>
 
+          <div>
+            <h2>🎯 Remates</h2>
+            <BarChart width={350} height={250} data={shotsData}>
+              <XAxis dataKey="team" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="shots" fill="#22c55e" />
+            </BarChart>
+          </div>
+
+          {analysis?.metrics && (
+            <div>
+              <h2>📡 Radar táctico</h2>
+              <RadarChart width={350} height={250} data={radarData}>
+                <PolarGrid />
+                <PolarAngleAxis dataKey="subject" />
+                <PolarRadiusAxis domain={[0, 10]} />
+                <Radar
+                  name="Equipo"
+                  dataKey="value"
+                  stroke="#8884d8"
+                  fill="#8884d8"
+                  fillOpacity={0.6}
+                />
+              </RadarChart>
+            </div>
+          )}
+
         </div>
-      )}
-
-      {analysis && (
-        <>
-          <h2 style={{ marginTop: 30 }}>📊 Posesión</h2>
-
-          <PieChart width={400} height={300}>
-            <Pie
-              data={possessionData}
-              dataKey="value"
-              nameKey="name"
-              outerRadius={100}
-              label
-            >
-              <Cell fill="#3b82f6" />
-              <Cell fill="#ef4444" />
-            </Pie>
-
-            <Tooltip />
-
-          </PieChart>
-        </>
-      )}
-
-      {analysis && (
-        <>
-          <h2 style={{ marginTop: 30 }}>📊 Remates</h2>
-
-          <BarChart width={400} height={300} data={shotsData}>
-            <XAxis dataKey="team" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="shots" fill="#22c55e" />
-          </BarChart>
-        </>
-      )}
-
-      {analysis?.metrics && (
-        <>
-          <h2>Análisis táctico</h2>
-
-          <RadarChart width={400} height={300} data={radarData}>
-            <PolarGrid />
-            <PolarAngleAxis dataKey="subject" />
-            <PolarRadiusAxis angle={30} domain={[0, 10]} />
-            <Radar name="Equipo" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-          </RadarChart>
-        </>
       )}
 
     </div>
