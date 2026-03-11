@@ -143,3 +143,14 @@ Formato:
         "analysis": analysis_json,
         "stats": stats
     }
+
+@app.get("/matches")
+def get_matches():
+
+    db = SessionLocal()
+
+    matches = db.query(models.Match).all()
+
+    db.close()
+
+    return matches
