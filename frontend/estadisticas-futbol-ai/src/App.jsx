@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, PieChart, Cell, Pie, Tooltip, Bar, BarChart, XAxis, YAxis } from "recharts";
 
 function App() {
@@ -17,6 +17,7 @@ function App() {
   const [yellowB, setYellowB] = useState("")
   const [redA, setRedA] = useState("")
   const [redB, setRedB] = useState("")
+  const [matches, setMatches] = useState([]);
   const possessionData = [
     { name: teamA || "Equipo A", value: Number(posA) || 0 },
     { name: teamB || "Equipo B", value: Number(posB) || 0 }
@@ -75,6 +76,7 @@ function App() {
       const data = await res.json();
 
       setAnalysis(data.analysis);
+      loadMatches();
 
     } catch (error) {
 
@@ -86,6 +88,29 @@ function App() {
 
     }
   }
+
+  async function loadMatches() {
+
+    try {
+
+      const res = await fetch("http://127.0.0.1:8000/matches");
+      const data = await res.json();
+
+      setMatches(data);
+
+    } catch (error) {
+
+      console.error("Error cargando historial", error);
+
+    }
+
+  }
+
+  useEffect(() => {
+
+    loadMatches();
+
+  }, []);
 
   return (
     <div style={{ padding: 40, margin: "0 auto" }}>
@@ -127,26 +152,26 @@ function App() {
         </button>
       </div>
 
-      
-          {analysis &&
-            (
-              <div style={{ textAlign: "center", marginTop: 20, maxWidth: 400}}>
-                <div>
-                  <h2>📊 Análisis táctico</h2>
-                  <p><strong>⚽ Equipo dominante:</strong> {analysis.dominant_team}</p>
-                  <p><strong>🧠 Estilo táctico:</strong> {analysis.tactical_style}</p>
-                  <p><strong>🔥 Intensidad:</strong> {analysis.intensity}</p>
-                  <p><strong>📐 Formaciones:</strong></p>
-                  <p>{analysis.formation_analysis}</p>
-                  <p><strong>🟨 Disciplina:</strong></p>
-                  <p>{analysis.discipline}</p>
-                  <p><strong>💡 Insight:</strong></p>
-                  <p>{analysis.key_insight}</p>
-                  <p>{analysis.summary}</p>
-                </div>
-              </div>
-            )
-          }
+
+      {analysis &&
+        (
+          <div style={{ textAlign: "center", marginTop: 20, maxWidth: 400 }}>
+            <div>
+              <h2>📊 Análisis táctico</h2>
+              <p><strong>⚽ Equipo dominante:</strong> {analysis.dominant_team}</p>
+              <p><strong>🧠 Estilo táctico:</strong> {analysis.tactical_style}</p>
+              <p><strong>🔥 Intensidad:</strong> {analysis.intensity}</p>
+              <p><strong>📐 Formaciones:</strong></p>
+              <p>{analysis.formation_analysis}</p>
+              <p><strong>🟨 Disciplina:</strong></p>
+              <p>{analysis.discipline}</p>
+              <p><strong>💡 Insight:</strong></p>
+              <p>{analysis.key_insight}</p>
+              <p>{analysis.summary}</p>
+            </div>
+          </div>
+        )
+      }
 
       {analysis && (
         <div
@@ -206,6 +231,59 @@ function App() {
 
         </div>
       )}
+
+      <div style={{ marginTop: 60 }}>
+
+        <h2 style={{ textAlign: "center" }}>
+          📚 Historial de Partidos Analizados
+        </h2>
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(250px,1fr))",
+          gap: 20,
+          marginTop: 30
+        }}>
+
+          {matches.slice(0, 10).map((match) => {
+
+            const analysis = JSON.parse(match.analysis);
+
+            return (
+              <div
+                key={match.id}
+                style={{
+                  border: "1px solid #ddd",
+                  borderRadius: 10,
+                  padding: 20,
+                  background: "#9b9b9b"
+                }}
+              >
+
+                <h3>
+                  ⚽ {match.teamA} vs {match.teamB}
+                </h3>
+
+                <p>
+                  🎯 Remates: {match.shotsA} - {match.shotsB}
+                </p>
+
+                <p>
+                  📊 Posesión: {match.possessionA}% - {match.possessionB}%
+                </p>
+
+                <p>
+                  🧠 Dominante: {analysis.dominant_team}
+                </p>
+
+              </div>
+            );
+
+          })}
+
+        </div>
+
+      </div>
 
     </div>
   );
