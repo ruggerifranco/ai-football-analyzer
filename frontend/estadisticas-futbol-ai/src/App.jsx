@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, PieChart, Cell, Pie, Tooltip, Bar, BarChart, XAxis, YAxis } from "recharts";
 
 function App() {
@@ -17,6 +17,7 @@ function App() {
   const [yellowB, setYellowB] = useState("")
   const [redA, setRedA] = useState("")
   const [redB, setRedB] = useState("")
+  const [matches, setMatches] = useState([]);
   const possessionData = [
     { name: teamA || "Equipo A", value: Number(posA) || 0 },
     { name: teamB || "Equipo B", value: Number(posB) || 0 }
@@ -75,6 +76,7 @@ function App() {
       const data = await res.json();
 
       setAnalysis(data.analysis);
+      loadMatches();
 
     } catch (error) {
 
@@ -86,6 +88,46 @@ function App() {
 
     }
   }
+
+  async function loadMatches() {
+
+    try {
+
+      const res = await fetch("http://127.0.0.1:8000/matches");
+      const data = await res.json();
+
+      setMatches(data);
+
+    } catch (error) {
+
+      console.error("Error cargando historial", error);
+
+    }
+
+  }
+
+  function viewMatch(match) {
+
+    const parsedAnalysis = JSON.parse(match.analysis);
+
+    setTeamA(match.teamA);
+    setTeamB(match.teamB);
+
+    setShotsA(match.shotsA);
+    setShotsB(match.shotsB);
+
+    setPosA(match.possessionA);
+    setPosB(match.possessionB);
+
+    setAnalysis(parsedAnalysis);
+
+  }
+
+  useEffect(() => {
+
+    loadMatches();
+
+  }, []);
 
   return (
     <div style={{ padding: 40, margin: "0 auto" }}>
@@ -126,6 +168,73 @@ function App() {
           {loading ? '⏳ Analizando partido...' : 'Analizar Partido'}
         </button>
       </div>
+
+
+      {analysis &&
+        (
+          <div style={{
+            margin: "0 auto"
+          }}>
+            <div>
+              <h2>📊 Análisis táctico</h2>
+              <p><strong>⚽ Equipo dominante:</strong> {analysis.dominant_team}</p>
+              <p><strong>📐 Formaciones:</strong></p>
+              <p>{analysis.formation_analysis}</p>
+              <p>{analysis.discipline}</p>
+              <p><strong>💡 Conclusión:</strong></p>
+              <p>{analysis.key_insight}</p>
+              <p>{analysis.summary}</p>
+              <div style={{ marginTop: 30 }}>
+
+                <h2>📈 Evaluación del partido</h2>
+
+                <p>
+                  <strong>🧠 Estilo táctico:</strong> {analysis.tactical_style}
+                </p>
+
+                <p>
+                  <strong>🔥 Intensidad:</strong> {analysis.intensity}
+                </p>
+
+                <p>
+                  <strong>🟨 Disciplina:</strong> {analysis.discipline}
+                </p>
+
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {analysis?.tactical_recommendations && (
+        <div style={{ marginTop: 50 }}>
+
+          <h2>🧠 Recomendaciones tácticas IA</h2>
+
+          <div style={{ display: "flex", gap: 40, justifyContent: "center" }}>
+
+            <div>
+              <h3>{teamA}</h3>
+              <ul>
+                {analysis.tactical_recommendations?.teamA?.map((rec, i) => (
+                  <li key={i}>{rec}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3>{teamB}</h3>
+              <ul>
+                {analysis.tactical_recommendations?.teamB?.map((rec, i) => (
+                  <li key={i}>{rec}</li>
+                ))}
+              </ul>
+            </div>
+
+          </div>
+
+        </div>
+      )}
 
       {analysis && (
         <div
@@ -185,6 +294,77 @@ function App() {
 
         </div>
       )}
+
+      <div style={{ marginTop: 60 }}>
+
+        <h2 style={{ textAlign: "center" }}>
+          📚 Historial de Partidos Analizados
+        </h2>
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(250px,1fr))",
+          gap: 20,
+          marginTop: 30
+        }}>
+
+          {matches.slice(0, 10).map((match) => {
+
+            const analysis = JSON.parse(match.analysis);
+
+            return (
+              <div
+                key={match.id}
+                onClick={() => viewMatch(match)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.03)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+                style={{
+                  border: "1px solid #ddd",
+                  borderRadius: 12,
+                  padding: 20,
+                  background: "#9b9b9b",
+                  cursor: "pointer",
+                  transition: "0.2s",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
+                }}
+              >
+
+                <h3>
+                  ⚽ {match.teamA} vs {match.teamB}
+                </h3>
+
+                <p>
+                  📅 {new Date(match.created_at).toLocaleString()}
+                </p>
+
+                <p>
+                  📐 {match.formationA} vs {match.formationB}
+                </p>
+
+                <p>
+                  🎯 Remates: {match.shotsA} - {match.shotsB}
+                </p>
+
+                <p>
+                  📊 Posesión: {match.possessionA}% - {match.possessionB}%
+                </p>
+
+                <p>
+                  🧠 Dominante: {analysis.dominant_team}
+                </p>
+
+              </div>
+            );
+
+          })}
+
+        </div>
+
+      </div>
 
     </div>
   );
